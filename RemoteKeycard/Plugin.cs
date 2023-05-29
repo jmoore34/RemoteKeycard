@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using Exiled.CustomItems.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.Events.EventArgs.Player;
 using System;
@@ -45,8 +46,26 @@ namespace RemoteKeycard
             base.OnDisabled();
         }
 
+        private CustomItem? _hackDevice = null;
+        private CustomItem? HackDevice
+        {
+            get
+            {
+                if (_hackDevice == null && CustomItem.TryGet(208u, out var hackDevice))
+                {
+                    _hackDevice = hackDevice;
+                }
+                return _hackDevice;
+            }
+        }
+
+
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
+            if (HackDevice != null && HackDevice.Check(ev.Player.CurrentItem))
+            {
+                return;
+            }
             ev.IsAllowed |= ev.Player.Items.Any(item =>
                 item.IsKeycard
                 && ev.Door.RequiredPermissions.CheckPermissions(item.Base, ev.Player.ReferenceHub)
