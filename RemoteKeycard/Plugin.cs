@@ -7,8 +7,8 @@ namespace RemoteKeycard
 {
     public class Plugin : Plugin<Config>
     {
-        public override string Name => "AFK Replacer";
-        public override string Author => "Jon M";
+        public override string Name => "Remote Keycard";
+        public override string Author => "Jonathan Moore";
         public override Version Version => new Version(1, 0, 0);
 
         // Singleton pattern allows easy access to the central state from other classes
@@ -46,7 +46,7 @@ namespace RemoteKeycard
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            ev.IsAllowed = ev.Player.Items.Any(item =>
+            ev.IsAllowed |= ev.Player.Items.Any(item =>
                 item.IsKeycard
                 && ev.Door.RequiredPermissions.CheckPermissions(item.Base, ev.Player.ReferenceHub)
             );
@@ -54,7 +54,7 @@ namespace RemoteKeycard
 
         public void OnInteractingLocker(InteractingLockerEventArgs ev)
         {
-            ev.IsAllowed = ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
+            ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
                 item.Base.ItemTypeId
                     is ItemType.KeycardResearchCoordinator
                     or ItemType.KeycardContainmentEngineer
@@ -69,7 +69,7 @@ namespace RemoteKeycard
 
         public void OnUnlockingGenerator(UnlockingGeneratorEventArgs ev)
         {
-            ev.IsAllowed = ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
+            ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
                 item.Base.ItemTypeId
                     is ItemType.KeycardNTFOfficer
                     or ItemType.KeycardNTFLieutenant
@@ -81,7 +81,7 @@ namespace RemoteKeycard
 
         public void OnActivatingWarheadPanel(ActivatingWarheadPanelEventArgs ev)
         {
-            ev.IsAllowed = ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
+            ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
                 item.Base.ItemTypeId
                     is ItemType.KeycardContainmentEngineer
                     or ItemType.KeycardFacilityManager
