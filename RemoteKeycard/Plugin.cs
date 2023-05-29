@@ -1,4 +1,5 @@
 ﻿using Exiled.API.Features;
+using Exiled.CustomRoles.API;
 using Exiled.Events.EventArgs.Player;
 using System;
 using System.Linq;
@@ -69,7 +70,13 @@ namespace RemoteKeycard
 
         public void OnUnlockingGenerator(UnlockingGeneratorEventArgs ev)
         {
-            ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
+            if (ev.Player.GetCustomRoles().Any(r => r.Name.StartsWith("SH")))
+            { // serpents' hand
+                ev.IsAllowed = false;
+            }
+            else
+            {
+                ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
                 item.Base.ItemTypeId
                     is ItemType.KeycardNTFOfficer
                     or ItemType.KeycardNTFLieutenant
@@ -77,6 +84,8 @@ namespace RemoteKeycard
                     or ItemType.KeycardChaosInsurgency
                     or ItemType.KeycardO5
             );
+            }
+
         }
 
         public void OnActivatingWarheadPanel(ActivatingWarheadPanelEventArgs ev)
