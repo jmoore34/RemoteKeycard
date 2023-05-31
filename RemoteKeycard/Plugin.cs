@@ -97,12 +97,15 @@ namespace RemoteKeycard
             else
             {
                 ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
-                item.Base.ItemTypeId
-                    is ItemType.KeycardNTFOfficer
-                    or ItemType.KeycardNTFLieutenant
-                    or ItemType.KeycardNTFCommander
-                    or ItemType.KeycardChaosInsurgency
-                    or ItemType.KeycardO5
+                {
+                    if (item.Base is KeycardItem keycard)
+                    {
+                        bool allowed = keycard.Permissions.HasFlagFast(KeycardPermissions.ArmoryLevelTwo);
+                        //Log.Info($"Keycard with permissions {keycard.Permissions} attempted to unlock generator (allowed: {allowed})");
+                        return allowed;
+                    }
+                    return false;
+                }
             );
             }
 
