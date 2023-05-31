@@ -2,6 +2,8 @@
 using Exiled.CustomItems.API.Features;
 using Exiled.CustomRoles.API;
 using Exiled.Events.EventArgs.Player;
+using Interactables.Interobjects.DoorUtils;
+using InventorySystem.Items.Keycards;
 using System;
 using System.Linq;
 
@@ -74,17 +76,16 @@ namespace RemoteKeycard
 
         public void OnInteractingLocker(InteractingLockerEventArgs ev)
         {
-            ev.IsAllowed |= ev.Player.IsBypassModeEnabled || ev.Player.Items.Any(item =>
-                item.Base.ItemTypeId
-                    is ItemType.KeycardResearchCoordinator
-                    or ItemType.KeycardContainmentEngineer
-                    or ItemType.KeycardNTFOfficer
-                    or ItemType.KeycardNTFLieutenant
-                    or ItemType.KeycardNTFCommander
-                    or ItemType.KeycardFacilityManager
-                    or ItemType.KeycardChaosInsurgency
-                    or ItemType.KeycardO5
-            );
+            ev.IsAllowed |= ev.Player.Items.Any(item =>
+            {
+                if (item.Base is KeycardItem keycard)
+                {
+                    bool allowed = keycard.Permissions.HasFlagFast(ev.Chamber.RequiredPermissions);
+                    //Log.Debug($"Keycard with permissions {keycard.Permissions} attempted to open locker with required permissions {ev.Chamber.RequiredPermissions} (allowed: {allowed})");
+                    return allowed;
+                }
+                return false;
+            });
         }
 
         public void OnUnlockingGenerator(UnlockingGeneratorEventArgs ev)
