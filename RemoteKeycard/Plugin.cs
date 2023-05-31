@@ -25,7 +25,7 @@ namespace RemoteKeycard
             Exiled.Events.Handlers.Player.InteractingDoor += OnInteractingDoor;
             Exiled.Events.Handlers.Player.InteractingLocker += OnInteractingLocker;
             Exiled.Events.Handlers.Player.UnlockingGenerator += OnUnlockingGenerator;
-            Exiled.Events.Handlers.Player.ActivatingWarheadPanel += OnActivatingWarheadPanel;
+            //Exiled.Events.Handlers.Player.ActivatingWarheadPanel += OnActivatingWarheadPanel;
 
             // Register event handlers
             base.OnEnabled();
@@ -41,7 +41,7 @@ namespace RemoteKeycard
             Exiled.Events.Handlers.Player.InteractingDoor -= OnInteractingDoor;
             Exiled.Events.Handlers.Player.InteractingLocker -= OnInteractingLocker;
             Exiled.Events.Handlers.Player.UnlockingGenerator -= OnUnlockingGenerator;
-            Exiled.Events.Handlers.Player.ActivatingWarheadPanel -= OnActivatingWarheadPanel;
+            //Exiled.Events.Handlers.Player.ActivatingWarheadPanel -= OnActivatingWarheadPanel;
 
             base.OnDisabled();
         }
