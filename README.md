@@ -1,3 +1,3 @@
 # RemoteKeycard
 
-A SCP: SL plugin to automatically replace AFK players with spectators.
+SCP: SL plugin to allow you to use keycards without holding them in your hand 
