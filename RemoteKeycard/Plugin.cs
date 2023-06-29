@@ -4,7 +4,9 @@ using Exiled.CustomRoles.API;
 using Exiled.Events.EventArgs.Player;
 using Interactables.Interobjects.DoorUtils;
 using InventorySystem.Items.Keycards;
+using MEC;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace RemoteKeycard
@@ -61,17 +63,30 @@ namespace RemoteKeycard
             }
         }
 
+        private List<Door> cooldownDoors = new();
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (HackDevice != null && HackDevice.Check(ev.Player.CurrentItem))
-            {
+            if (ev.Door.IsLocked || ev.Door.IsMoving || cooldownDoors.Contains(ev.Door))
                 return;
-            }
-            ev.IsAllowed |= ev.Player.Items.Any(item =>
+            if (HackDevice != null && HackDevice.Check(ev.Player.CurrentItem))
+                return;
+            var authorized = ev.Player.Items.Any(item =>
                 item.IsKeycard
                 && ev.Door.RequiredPermissions.CheckPermissions(item.Base, ev.Player.ReferenceHub)
             );
+            if (authorized)
+            {
+                ev.IsAllowed = true;
+                if (ev.Door.IsGate)
+                {
+                    cooldownDoors.Add(ev.Door);
+                    Timing.CallDelayed(1f, () =>
+                    {
+                        cooldownDoors.Remove(ev.Door);
+                    });
+                }
+            }
         }
 
         public void OnInteractingLocker(InteractingLockerEventArgs ev)
