@@ -67,7 +67,7 @@ namespace RemoteKeycard
 
         public void OnInteractingDoor(InteractingDoorEventArgs ev)
         {
-            if (ev.Door.IsLocked || ev.Door.IsMoving || cooldownDoors.Contains(ev.Door))
+            if (ev.Door.IsLocked || !ev.Door.IsKeycardDoor || cooldownDoors.Contains(ev.Door))
                 return;
             if (HackDevice != null && HackDevice.Check(ev.Player.CurrentItem))
                 return;
@@ -78,14 +78,14 @@ namespace RemoteKeycard
             if (authorized)
             {
                 ev.IsAllowed = true;
-                if (ev.Door.IsGate)
+                cooldownDoors.Add(ev.Door);
+                // checkpoint: 9f right after close, 8.6f a little before close
+                // regular: 1.05f a little after close
+                var duration = ev.Door.IsCheckpoint ? 8.6f : 1.05f;
+                Timing.CallDelayed(duration, () =>
                 {
-                    cooldownDoors.Add(ev.Door);
-                    Timing.CallDelayed(1f, () =>
-                    {
-                        cooldownDoors.Remove(ev.Door);
-                    });
-                }
+                    cooldownDoors.Remove(ev.Door);
+                });
             }
         }
 
